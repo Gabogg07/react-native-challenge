@@ -1,25 +1,36 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, Button } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableWithoutFeedback } from 'react-native';
+import {Colors} from '../constants/colors'
+import Button from '../components/ui/Button';
+import Container from '../components/ui/Container';
 
-export default function HomeScreen() {
+
+function HomeScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Image style={styles.illustration} source={require('../assets/home-illustration.png')} />
-      <Text style={styles.title}>Howdy partner!</Text>
-      <Text>This is your assignment.</Text>
-      <Text>Follow the instructions on the Readme file.</Text>
-      <Text>Don’t worry, it’s easy! You should have the app looking smooth in no time.</Text>
-      <Button title="Start Here" onPress={() => alert('Home')} />
-    </View>
+    <Container style={styles.container}>
+      <View style={styles.segment}>
+        <Image style={styles.illustration} source={require('../assets/home-illustration.png')} />
+        <Text style={styles.title}>Howdy partner!</Text>
+      </View>
+      <View style={styles.segment}>
+        <Text style={styles.text}>This is your assignment.</Text>
+        <Text style={styles.text}>Follow the instructions on the Readme file.</Text>
+      </View>
+      <View style={styles.segment}>
+        <Text style={styles.text}>Don’t worry, it’s easy! You should have the app looking smooth in no time.</Text>
+      </View>
+      <Button
+        text='Get Started'
+        onPress={()=>navigation.navigate('Home')}
+        style={styles.button}
+      />
+    </Container>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
+  container:{
     alignItems: 'center',
-    justifyContent: 'center',
   },
   illustration: {
     width: 256,
@@ -30,4 +41,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 12,
   },
+  text:{
+    textAlign:'center'
+  },
+  segment:{
+    marginVertical:5
+  },
+  button:{
+    marginTop:40
+  },
 });
+
+export default HomeScreen;
