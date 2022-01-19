@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableWithoutFeedback, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, FlatList } from 'react-native';
 import ListItem from '../components/ui/ListItem'
 import Container from '../components/ui/Container';
 import Button from '../components/ui/Button';
@@ -47,11 +47,12 @@ export default function ListScreen({navigation}) {
           <Text style={{fontSize:20}}>Loading ...</Text>
         </View>
       : coins && coins.length > 0 ? (
-        <ScrollView>
-          {coins.map((item) => (
+        <FlatList
+          renderItem={({item}) => (
             <ListItem key={item.id} item={item} onPress={()=>navigation.navigate('Detail',{item})}/>
-          ))}
-        </ScrollView>
+          )}
+          data={coins}
+        />
       ) : (
         <View style={{flex:1, backgroundColor:'white', justifyContent: 'center', alignItems: 'center'}}>
           <Text style={{fontSize:20}}>Ops there must have been an error ...</Text>
