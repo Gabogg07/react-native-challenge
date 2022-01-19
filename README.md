@@ -51,15 +51,14 @@ Join TRUENORTH and build the next fintech app.
 ## Basic structure and configurations
 
 ```
-api/                  // Api
 components/           // App components
-  auth/               // Auth components
-  common/             // Layout blocks, organisms
   icons/              // SVG Icons exported as components
   ui/                 // Atomic components
 config/               // JSON with defaults (ie: SEO)
 screens/              // Router
 styles/               // Global styles
+context/              // context files
+constants/            // constants files and helpers
 app.json              // app configuration
 package.json          // deps and workspace scripts
 babel.config.json     // babel configuration
