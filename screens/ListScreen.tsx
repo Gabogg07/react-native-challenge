@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableWithoutFeedback, ScrollView } from 'react-native';
+import ListItem from '../components/ui/ListItem'
+import Container from '../components/ui/Container';
+import Button from '../components/ui/Button';
 import axios from 'axios';
 
 /**
@@ -13,50 +16,60 @@ import axios from 'axios';
  * 💯 Handle loading and error scenarios, always
  */
 
-export default function ListScreen() {
-  const data = mockData.data;
+const API_URL = 'https://api.coincap.io/v2/assets'
 
-  const ListItem = ({ item }) => {
-    return (
-      <View style={styles.itemContainer}>
-        {/* ToDo: Link to `DetailScreen` passing `id` as parameter */}
-        <TouchableWithoutFeedback onPress={() => alert('Detail')}>
-          <View>
-            <View>
-              <Text>{item.symbol}</Text>
-              <Text>#{item.rank}</Text>
-            </View>
-            <View>
-              <Text>{item.name}</Text>
-              {/* 💯  In this execercise you can round numbers without a library */}
-              <Text>USD {item.priceUsd}</Text>
-              <Text>Last24 {item.changePercent24Hr}</Text>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
-    );
-  };
+export default function ListScreen({navigation}) {
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [coins, setCoins] = useState([])
+
+  const fetchAssets = () => {
+    setLoading(true)
+    axios.get(API_URL)
+    .then(function(response) {
+        setCoins(response.data.data)
+    }).catch(function(error) {
+      setError(JSON.stringify(error.message))
+    }).finally(function() {
+      setLoading(false)
+    });
+  }
+
+  useEffect(()=>{
+    fetchAssets()
+  },[])
 
   return (
-    <View style={styles.container}>
-      {data && data.length > 0 ? (
+    <Container style={styles.container}>
+
+      {loading ?
+        <View style={{flex:1, backgroundColor:'white', justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={{fontSize:20}}>Loading ...</Text>
+        </View>
+      : coins && coins.length > 0 ? (
         <ScrollView>
-          {data.map((item) => (
-            <ListItem key={item.id} item={item} />
+          {coins.map((item) => (
+            <ListItem key={item.id} item={item} onPress={()=>navigation.navigate('Detail',{item})}/>
           ))}
         </ScrollView>
       ) : (
-        <Text>Loading</Text>
+        <View style={{flex:1, backgroundColor:'white', justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={{fontSize:20}}>Ops there must have been an error ...</Text>
+          <Text style={{fontSize:20}}>{error}</Text>
+          <Button text='Retry' onPress={fetchAssets} style={{marginTop:30}}/>
+
+        </View>
       )}
-    </View>
+    </Container>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 8,
+    paddingHorizontal:20,
+    paddingVertical:20,
+    backgroundColor:'transparent',
   },
   illustration: {
     width: 50,
