@@ -1,7 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
 import axios from 'axios';
-
+import {Colors} from '../constants/colors'
+import { moneyFormater } from '../constants/moneyFormater';
+import Button from '../components/ui/Button';
 /**
  * ToDo: Feed the list using fetching data from a RESTful API
  *
@@ -13,41 +15,129 @@ import axios from 'axios';
  * 💯 Handle loading and error scenarios, always
  */
 
-export default function ListScreen() {
+export default function ListScreen({navigation, route}) {
   /* ToDo: Get the id param from the route */
   const id = 'bitcoin';
-  const item = mockData.data;
+  const {item} = route.params
 
-  return (
-    <View style={styles.container}>
-      {item ? (
-        <View>
-          <Text>itemId: {JSON.stringify(id)}</Text>
-          <Text>#{item.rank}</Text>
-          <Text>{item.symbol}</Text>
-          <Text>{item.name}</Text>
-          <Text>USD {item.priceUsd}</Text>
-          <Text>Last24 {item.changePercent24Hr}</Text>
-          <Text>Supply {item.supply}</Text>
-          <Text>Max Supply {item.maxSupply}</Text>
-          <Text>Market Cap Usd {item.marketCapUsd}</Text>
 
-          <Button title="My Wallet" onPress={() => alert('Wallet')} />
+  const changePercent = (value)=>{
+    const isPositive = value >= 0
+    return (
+        <View 
+            style={[styles.percentageBubble,{
+                backgroundColor: isPositive ? Colors.green : Colors.red,
+            }]}
+        > 
+            <Text 
+                style={{
+                    color: isPositive ? Colors.darkGreen : Colors.darkRed,
+                    fontWeight:'bold'
+                }}
+            >
+                <Text style={{color: isPositive ? Colors.lightGreen : Colors.lightRed,}}>{isPositive ? '↑' : '↓'}</Text>{Math.abs(value)}%
+            </Text> 
         </View>
-      ) : (
-        <Text>Loading</Text>
-      )}
+    )}
+
+    const halfBoldTitle= (bolded, regular, subtitle) => (
+      <View style={{flexDirection:'row', marginVertical:5}}>
+        <Text style={[styles.text,{fontWeight:'500'}]}>{bolded} </Text>
+        <Text style={styles.text}>{regular} </Text>
+        {subtitle && (
+          <Text style={styles.subtitle}>{subtitle}</Text>
+        )}
+      </View>
+    )
+
+    return (
+      <View style={styles.container}>
+        <TouchableWithoutFeedback onPress={()=>props.navigation.navigate('Detail',{item})}>
+            <View style={styles.cardContainer}>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <Text style={styles.title}><Text style={[styles.title,{fontWeight:'bold'}]}>{item.symbol}</Text> - {item.name}</Text>
+                    <Text style={styles.subtitle}>#{item.rank}</Text>
+                </View>
+
+                <View style={styles.firsLine}>
+                    <View style={styles.secondLine}>
+                        {/* 💯  In this execercise you can round numbers without a library */}
+                        <Text style={styles.price}> $ {parseFloat(item.priceUsd).toFixed(2)}</Text>
+                        <Text style={styles.subtitle}> USD</Text>
+                    </View>
+                    {changePercent(moneyFormater(item.changePercent24Hr))}
+                </View>
+                <View>
+                  {halfBoldTitle('Supply',moneyFormater(item.supply))}
+                  {halfBoldTitle('Max Supply',moneyFormater(item.maxSupply))}
+                  {halfBoldTitle('Market Cap $',moneyFormater(item.marketCapUsd), 'USD')}
+
+                </View>
+            </View>
+        </TouchableWithoutFeedback>
+        <Button
+          text='My Wallet'
+          onPress={()=>navigation.navigate('Wallet')}
+          style={styles.button}
+        />
     </View>
-  );
-}
+
+    )}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal:20,
+    paddingVertical:15,
+    backgroundColor:'transparent',
   },
+  cardContainer: {
+      backgroundColor: '#fff',
+      paddingHorizontal:20,
+      paddingVertical:15,
+      width:'100%',
+      marginVertical:10,
+      justifyContent: 'center',
+      borderColor:'lightgrey',
+      borderRadius:10,
+      elevation:10,
+      shadowRadius:10,
+  },
+  title:{
+      fontSize:22
+  },
+  firsLine:{
+      flexDirection:'row', 
+      justifyContent: 'space-between', 
+      marginVertical:10
+  },
+  secondLine:{
+      flexDirection:'row', 
+      justifyContent:'flex-start'
+  },
+  subtitle:{
+      color:'grey',
+      fontSize:18,
+      alignSelf: 'flex-end',
+  },
+  price:{
+      fontSize:28,
+      color: Colors.standardBlue,
+      fontWeight: '700'
+  },
+  percentageBubble: {
+      flexWrap: 'wrap',
+      borderRadius:15,
+      paddingVertical:5,
+      paddingHorizontal:15,
+      alignSelf: 'flex-end',
+  },
+  text:{
+    fontSize:20
+  },
+  button:{
+    marginTop:20
+  }
 });
 
 const mockData = {
