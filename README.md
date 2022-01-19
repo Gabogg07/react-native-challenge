@@ -1,4 +1,8 @@
 # TRUENORTH React-Native Challenge ⚡️
+Challenge by Gabriel Gutierrez 
+gabrieleduardogg@gmail.com
+
+The login works with any credentials the first time per device. Afterwards the same username and password must be used in order to login.
 
 Join TRUENORTH and build the next fintech app.
 
